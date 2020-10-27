@@ -1,0 +1,31 @@
+Type: Component
+Name: s-aws-lambda
+Provider:
+  - AWS
+Version: 0.0.1
+Description: AWS Lambda 部署移除
+HomePage: https://www.aliyun.com/
+Tags:
+  - AWS Lambda
+Category: 基础云服务
+Commands:
+  deploy: 部署函数
+  remove: 移除函数
+Properties:
+  Region:
+    Description: 地域
+    Required: true
+  Function:
+    Code:
+      Description: 代码包
+      Required: true
+    DeadLetterConfig:
+      Description: https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#dlq
+      Required: false
+    Description:
+      Description: 描述
+      Required: false
+    Environment:
+      Description: 环境变量
+      Required: false
+      
