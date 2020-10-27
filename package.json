@@ -6,8 +6,7 @@
   "dependencies": {
     "@serverless-devs/s-core": "0.0.22",
     "@serverless-devs/s-zip": "0.0.8",
-    "aws-sdk": "^2.778.0",
-    "https": "^1.0.0"
+    "aws-sdk": "^2.778.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -66,6 +66,10 @@ class Function {
 
     return await this.lambda('deleteFunction', { FunctionName: functionName });
   }
+
+  async get (functionName) {
+    return await this.lambda('getFunction', { FunctionName: functionName });
+  }
 }
 
 module.exports = Function;

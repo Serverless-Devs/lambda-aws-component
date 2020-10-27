@@ -1,7 +1,7 @@
 const { Component } = require('@serverless-devs/s-core');
 const Logger = require('./utils/logger');
 const AWSClient = require('./utils/getClient');
-const Function = require('./utils/handlerFunction');
+const { Function, EventSource } = require('./utils/handlerRequest');
 
 class AWSComponent extends Component {
   constructor() {
@@ -72,7 +72,7 @@ class AWSComponent extends Component {
       `Starting remove of AWS Lambda "${functionName}" to the AWS region "${region}".`
     )
     const functionClient = new Function(awsClients.lambda());
-    const res = await functionClient.remove(properties, region);
+    await functionClient.remove(properties);
     this.logger.info(
       `Successfully remove AWS Lambda function.`
     )
@@ -80,6 +80,20 @@ class AWSComponent extends Component {
       region,
       FunctionName: functionName
     };
+  }
+  async get (inputs) {
+    const {
+      awsClients,
+      properties,
+    } = this.handlerInput(inputs);
+
+    const functionName = properties.Function.FunctionName;
+    if (!functionName) {
+      throw new Error(`FunctionName is empty.`)
+    }
+    const functionClient = new Function(awsClients.lambda());
+    const res = await functionClient.get(functionName);
+    return res
   }
 }
 
