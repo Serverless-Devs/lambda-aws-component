@@ -45,19 +45,18 @@ class AWSComponent extends Component {
       throw new Error(`FunctionName is empty.`)
     }
 
-    // const functionClient = new Function(awsClients.lambda());
+    const resConfig = {};
 
-    // this.logger.info(
-    //   `Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`
-    // )
-    // const res = await functionClient.deploy(properties, region);
-    // this.logger.info(
-    //   `Successfully deploy AWS Lambda function.`
-    // )
+    const functionClient = new Function(awsClients.lambda());
+    this.logger.info(`Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`);
+    const res = await functionClient.deploy(properties);
+    resConfig.Function = res;
+    this.logger.info(`Successfully deploy AWS Lambda function.`);
+
     const eventSourceClient = new EventSource(awsClients);
-    const eventSourceRes = await eventSourceClient.deploy(properties);
+    resConfig.Event = await eventSourceClient.deploy(properties.Events, functionName, res);
 
-    // return res;
+    return resConfig;
   }
   async remove (inputs) {
     const {
@@ -83,36 +82,6 @@ class AWSComponent extends Component {
       region,
       FunctionName: functionName
     };
-  }
-  async get (inputs) {
-    const {
-      awsClients,
-      properties,
-    } = this.handlerInput(inputs);
-
-    const functionName = properties.Function.FunctionName;
-    if (!functionName) {
-      throw new Error(`FunctionName is empty.`)
-    }
-
-    const apigatewayv2 = awsClients.apigatewayv2();
-    apigatewayv2.getIntegration({
-      ApiId: 'rcfv0wusdj',
-      IntegrationId: '9hv1oi0'
-    }, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
-    });
-
-    // const config = {};
-
-    // const functionClient = new Function(awsClients.lambda());
-    // const functionRes = await functionClient.get(functionName);
-    // config.Function = functionRes.Configuration;
-
-    // const eventSourceClient = new EventSource(awsClients.lambda());
-    // const eventSourceRes = await eventSourceClient.get(properties);
-    // return config;
   }
 }
 
