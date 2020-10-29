@@ -71,16 +71,18 @@ class AWSComponent extends Component {
     }
 
     const eventSourceClient = new EventSource(awsClients);
-    const eventRes = await eventSourceClient.remove(functionName, properties.Events);
+    const eventRes = await eventSourceClient.remove(properties.Events, functionName);
     
     this.logger.info(`Starting remove of AWS Lambda "${functionName}" to the AWS region "${region}".`)
     const functionClient = new Function(awsClients.lambda());
     await functionClient.remove(properties);
     this.logger.info(`Successfully remove AWS Lambda function.`)
     return {
-      region,
-      FunctionName: functionName,
-      ...eventRes,
+      Region: region,
+      FunctionName: {
+        Name: functionName
+      },
+      Event: eventRes
     };
   }
 }
