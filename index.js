@@ -45,16 +45,19 @@ class AWSComponent extends Component {
       throw new Error(`FunctionName is empty.`)
     }
 
-    const functionClient = new Function(awsClients.lambda());
+    // const functionClient = new Function(awsClients.lambda());
 
-    this.logger.info(
-      `Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`
-    )
-    const res = await functionClient.deploy(properties, region);
-    this.logger.info(
-      `Successfully deploy AWS Lambda function.`
-    )
-    return res;
+    // this.logger.info(
+    //   `Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`
+    // )
+    // const res = await functionClient.deploy(properties, region);
+    // this.logger.info(
+    //   `Successfully deploy AWS Lambda function.`
+    // )
+    const eventSourceClient = new EventSource(awsClients);
+    const eventSourceRes = await eventSourceClient.deploy(properties);
+
+    // return res;
   }
   async remove (inputs) {
     const {
@@ -91,9 +94,25 @@ class AWSComponent extends Component {
     if (!functionName) {
       throw new Error(`FunctionName is empty.`)
     }
-    const functionClient = new Function(awsClients.lambda());
-    const res = await functionClient.get(functionName);
-    return res
+
+    const apigatewayv2 = awsClients.apigatewayv2();
+    apigatewayv2.getIntegration({
+      ApiId: 'rcfv0wusdj',
+      IntegrationId: '9hv1oi0'
+    }, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     console.log(data);           // successful response
+    });
+
+    // const config = {};
+
+    // const functionClient = new Function(awsClients.lambda());
+    // const functionRes = await functionClient.get(functionName);
+    // config.Function = functionRes.Configuration;
+
+    // const eventSourceClient = new EventSource(awsClients.lambda());
+    // const eventSourceRes = await eventSourceClient.get(properties);
+    // return config;
   }
 }
 

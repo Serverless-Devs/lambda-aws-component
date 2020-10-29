@@ -16,6 +16,11 @@ class Client {
     const lambda = new AWS.Lambda(this.config);
     return lambda;
   }
+
+  apigatewayv2 () {
+    const apigatewayv2 = new AWS.ApiGatewayV2(this.config);
+    return apigatewayv2;
+  }
 }
 
 module.exports = Client;
