@@ -69,18 +69,18 @@ class AWSComponent extends Component {
     if (!functionName) {
       throw new Error(`FunctionName is empty.`)
     }
+
+    const eventSourceClient = new EventSource(awsClients);
+    const eventRes = await eventSourceClient.remove(functionName, properties.Events);
     
-    this.logger.info(
-      `Starting remove of AWS Lambda "${functionName}" to the AWS region "${region}".`
-    )
+    this.logger.info(`Starting remove of AWS Lambda "${functionName}" to the AWS region "${region}".`)
     const functionClient = new Function(awsClients.lambda());
     await functionClient.remove(properties);
-    this.logger.info(
-      `Successfully remove AWS Lambda function.`
-    )
+    this.logger.info(`Successfully remove AWS Lambda function.`)
     return {
       region,
-      FunctionName: functionName
+      FunctionName: functionName,
+      ...eventRes,
     };
   }
 }

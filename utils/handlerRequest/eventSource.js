@@ -95,7 +95,8 @@ class EventSource {
     })
   }
 
-  async addApiTrigger (functionName, eventName, functionArn, properties) {
+  async addApiTrigger (functionName, eventName, functionConfig, properties) {
+    const functionArn = functionConfig.FunctionArn;
     const apiRes = await this.handlerApi(eventName, functionArn);
     const integrationRes = await this.handlerIntegration(apiRes, properties, functionArn);
     await this.handlerRoute(apiRes, properties, integrationRes.IntegrationId)
@@ -103,11 +104,15 @@ class EventSource {
     const arns = functionArn.split(':');
     return await this.lambda('addPermission', {
       FunctionName: functionName,
-      StatementId: uuid.v4(),
+      StatementId: this.getUUID(functionName),
       Action: 'lambda:InvokeFunction',
       Principal: 'apigateway.amazonaws.com',
       SourceArn: `arn:aws:execute-api:${arns[3]}:${arns[4]}:${apiRes.ApiId}/*/*${properties.Path}`
     });
+  }
+
+  getUUID (functionName) {
+    return uuid.v5(functionName, '8bbea2bd-3bcf-5055-932f-5b38be2464b1')
   }
 
   async deploy (events, functionName, functionConfig) {
@@ -115,7 +120,6 @@ class EventSource {
       return;
     }
     const resConfig = {};
-    const functionArn = functionConfig.FunctionArn;
 
     for (const eventName in events) {
       if (events[eventName].Type !== 'Api') {
@@ -126,8 +130,34 @@ class EventSource {
       }
       this.logger.info(`Start deploying ${eventName}.`);
       const properties = events[eventName].Properties;
-      resConfig[eventName] = await this.addApiTrigger(functionName, eventName, functionArn, properties);
-      this.logger.info(`Successfully deploy Amazon API Gateway.`);
+      resConfig[eventName] = await this.addApiTrigger(functionName, eventName, functionConfig, properties);
+      this.logger.info(`Successfully deploy Amazon API Gateway Trigger.`);
+    }
+    return resConfig;
+  }
+
+  async remove (events, functionName) {
+    if (!(events && functionName)) {
+      return;
+    }
+
+    const resConfig = {};
+
+    for (const eventName in events) {
+      if (events[eventName].Type !== 'Api') {
+        const mes = `${events[eventName].Type} is not supported, so skip this configuration`;
+        this.logger.warn(mes);
+        resConfig[eventName] = { Message: mes };
+        continue;
+      }
+      this.logger.info(`Start remove ${eventName}.`);
+      await this.lambda('removePermission', {
+        FunctionName: functionName,
+        StatementId: this.getUUID(functionName)
+      });
+      const mes = `Successfully remove Amazon API Gateway Trigger.`;
+      this.logger.info(mes);
+      resConfig[eventName] = { Message: mes };
     }
     return resConfig;
   }
