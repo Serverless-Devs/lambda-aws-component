@@ -41,3 +41,8 @@ exports.handler = async (event) => {
   return response;
 };
 ````
+
+## 发布本组件
+
+1. 修改 publish.yaml 的版本
+2. 执行 npm run publish
