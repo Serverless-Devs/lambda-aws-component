@@ -2,6 +2,7 @@ const { packTo } = require('@serverless-devs/s-zip');
 const Logger = require('../logger');
 const path = require('path');
 const fs = require('fs');
+const { sleep, randomStr } = require('../utils')
 
 const trustPolicyDocument = `{
   "Version": "2012-10-17",
@@ -67,48 +68,74 @@ class Function {
 
   async createRole (functionName) {
     this.logger.warn(`The configuration does not have role information, and the component generates the role automatically.`);
-    const randomStr = ('0'.repeat(8) + parseInt(Math.pow(2, 40) * Math.random()).toString(32)).slice(-8);
-    const RoleName = `s-${functionName}-role-${randomStr}`;
-    this.logger.info(`Start generating role: ${RoleName}`);
+    const roleName = `s-${functionName}-role-${randomStr()}`;
+    this.logger.info(`Start generating roleName: ${roleName}`);
     this.logger.info(trustPolicyDocument)
     const { Role } = await this.iam('createRole', {
-      RoleName: `s-${functionName}-role-${randomStr}`,
+      RoleName: roleName,
       AssumeRolePolicyDocument: trustPolicyDocument,
       Description: 's auto generate role.'
     })
+    this.logger.info('Successfully generated role.');
     return Role.Arn;
+  }
+
+  /**
+   * 
+   * @param {*} functionInput 参数
+   * @param {*} retry 重试次数
+   * @param {*} times 第几次重试
+   */
+  async createFunction (functionInput, retry = 1, times = 1) {
+    const functionName = functionInput.FunctionName;
+    if (!functionInput.Role) {
+      retry = 5;
+      functionInput.Role = await this.createRole(functionName);
+      this.logger.warn('Start trying to create functions after 6 seconds of sleep.');
+      await sleep(6000);
+    }
+
+    try {
+      return await this.lambda('createFunction', functionInput);
+    } catch (e) {
+      if (times < retry && e.message === 'The role defined for the function cannot be assumed by Lambda.') {
+        this.logger.error(`Create Failure: ${e.message}`);
+        this.logger.info(`Retry ${times} times`);
+        await sleep(1500);
+        return await this.createFunction(functionInput, retry, times + 1);
+      }
+      throw new Error(e.message)
+    }
   }
 
   async deploy (properties) {
     const functionInput = JSON.parse(JSON.stringify(properties.Function));
     const functionName = functionInput.FunctionName;
+    this.logger.info('Start compressing code.');
     const code = await this.prepareCode(functionInput);
-    if (!functionInput.Role) {
-      functionInput.Role = await this.createRole(functionName);
-    }
+    this.logger.info('Successful compression code.');
+
     try {
-      return await this.lambda('createFunction', { ...functionInput, Code: code });
+      await this.lambda('getFunction', { FunctionName: functionName });
+      await this.lambda('updateFunctionCode', {
+        FunctionName: functionName,
+        ZipFile: code.ZipFile
+      });
+      delete functionInput.Code;
+      return await this.lambda('updateFunctionConfiguration', functionInput);
     } catch (e) {
-      if (!e.message.includes('Function already exist:')) {
-        throw new Error(e.message)
+      if (e.code === 'ResourceNotFoundException') {
+        functionInput.Code = code;
+        return await this.createFunction(functionInput);
       }
+      throw new Error(e.message)
     }
-    await this.lambda('updateFunctionCode', {
-      FunctionName: functionName,
-      ZipFile: code.ZipFile
-    });
-    delete functionInput.Code;
-    return await this.lambda('updateFunctionConfiguration', functionInput);
   }
   
   async remove (properties) {
     const functionName = properties.Function.FunctionName;
 
     return await this.lambda('deleteFunction', { FunctionName: functionName });
-  }
-
-  async get (functionName) {
-    return await this.lambda('getFunction', { FunctionName: functionName });
   }
 }
 

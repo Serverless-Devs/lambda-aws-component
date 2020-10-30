@@ -2,6 +2,8 @@ const { Component } = require('@serverless-devs/s-core');
 const Logger = require('./utils/logger');
 const AWSClient = require('./utils/getClient');
 const { Function, EventSource } = require('./utils/handlerRequest');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
 class AWSComponent extends Component {
   constructor() {
@@ -47,7 +49,7 @@ class AWSComponent extends Component {
 
     const resConfig = {};
 
-    const functionClient = new Function(awsClients.lambda());
+    const functionClient = new Function(awsClients);
     this.logger.info(`Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`);
     const res = await functionClient.deploy(properties);
     resConfig.Function = {
@@ -58,6 +60,15 @@ class AWSComponent extends Component {
 
     const eventSourceClient = new EventSource(awsClients);
     resConfig.Event = await eventSourceClient.deploy(properties.Events, functionName, res);
+
+    // Role 信息写到文件里
+    const configPath = inputs.Path.ConfigPath;
+    const projectName = inputs.Project.ProjectName;
+    const sourceConfig = yaml.safeLoad(fs.readFileSync(configPath));
+    if (!sourceConfig[projectName].Properties.Function.Role) {
+      sourceConfig[projectName].Properties.Function.Role = res.Role;
+      await fs.writeFileSync(configPath, yaml.dump(sourceConfig));
+    }
 
     return resConfig;
   }
@@ -77,7 +88,7 @@ class AWSComponent extends Component {
     const eventRes = await eventSourceClient.remove(properties.Events, functionName);
     
     this.logger.info(`Starting remove of AWS Lambda "${functionName}" to the AWS region "${region}".`)
-    const functionClient = new Function(awsClients.lambda());
+    const functionClient = new Function(awsClients);
     await functionClient.remove(properties);
     this.logger.info(`Successfully remove AWS Lambda function.`)
     return {
