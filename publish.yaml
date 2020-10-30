@@ -2,7 +2,7 @@ Type: Component
 Name: s-aws-lambda
 Provider:
   - AWS
-Version: 0.0.2
+Version: 0.0.3
 Description: AWS Lambda 部署移除
 HomePage: https://github.com/Serverless-Devs/lambda-aws-component/blob/master/readme.md
 Tags:

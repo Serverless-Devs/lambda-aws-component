@@ -12,9 +12,9 @@ cp readme.md dist/
 cp package.json dist/src/
 cp index.js dist/src/
 cp -r utils dist/src/
+cp -r node_modules dist/src/
 
 cd dist
 
 echo '发布组件'
-echo '需要先登录：s platform login -u username -p password'
 s platform publish
