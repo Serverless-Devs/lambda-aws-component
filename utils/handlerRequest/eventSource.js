@@ -38,14 +38,16 @@ class EventSource {
         return item;
       }
     }
-
-    return await this.apigatewayv2('createApi', {
+    this.logger.info(`The API Gateway does not exist '${apiName}',start creating API automatically.`)
+    const createApiRes = await this.apigatewayv2('createApi', {
       Name: apiName,
       ProtocolType: 'HTTP',
       Description: `s 自动创建。`,
       DisableExecuteApiEndpoint: true,
       Target: functionArn
-    })
+    });
+    this.logger.info(`Successfully created API.`)
+    return createApiRes;
   }
 
   async handlerIntegration({ ApiId }, properties, functionArn) {
@@ -66,7 +68,8 @@ class EventSource {
         })
       }
     }
-    return await this.apigatewayv2('createIntegration', {
+    this.logger.info(`There is no '${functionArn}' in the Integration, start creating Integration automatically.`)
+    const createRes = await this.apigatewayv2('createIntegration', {
       ApiId,
       ConnectionType: 'INTERNET',
       Description: 's 自动创建。',
@@ -75,7 +78,9 @@ class EventSource {
       IntegrationUri: functionArn,
       PayloadFormatVersion: PayloadFormatVersion || '2.0',
       TimeoutInMillis: TimeoutInMillis || 30000,
-    })
+    });
+    this.logger.info(`Successfully created Integration.`)
+    return createRes;
   }
 
   async handlerRoute({ ApiId }, properties, integrationId) {
@@ -87,12 +92,15 @@ class EventSource {
       }
     }
 
-    return await this.apigatewayv2('createRoute', {
+    this.logger.info(`There is no '${routeKey}' in the Routes, start creating Route automatically.`)
+    const createRouteRes = await this.apigatewayv2('createRoute', {
       ApiId,
       RouteKey: routeKey,
       AuthorizationType: 'NONE',
       Target: `integrations/${integrationId}`
-    })
+    });
+    this.logger.info(`Successfully created Route.`)
+    return createRouteRes;
   }
 
   async addApiTrigger (functionName, eventName, functionConfig, properties) {
@@ -144,9 +152,34 @@ class EventSource {
       this.logger.info(`Start deploying ${eventName}.`);
       const properties = events[eventName].Properties;
       resConfig[eventName] = await this.addApiTrigger(functionName, eventName, functionConfig, properties);
-      this.logger.info(`Successfully deploy Amazon API Gateway Trigger.`);
+      this.logger.info(`Successfully deploy ${eventName}.`);
     }
     return resConfig;
+  }
+
+  async removeApiTrigger (apiName, functionName) {
+    const { Items } = await this.apigatewayv2('getApis');
+    for (const item of Items) {
+      if (item.Name === apiName) {
+        try {
+          this.logger.info(`Start remove API: ${apiName}`);
+          await this.apigatewayv2('deleteApi', { ApiId: item.ApiId });
+          this.logger.info(`Successfully remove API.`)
+        } catch (e) {
+          this.logger.error(`Delete Failed: ${e.message}`)
+        }
+        break;
+      }
+    }
+
+    this.logger.info(`Start remove permission.`);
+    await this.lambda('removePermission', {
+      FunctionName: functionName,
+      StatementId: this.getUUID(functionName)
+    });
+    const mes = `Successfully remove Amazon API Gateway Trigger.`;
+    this.logger.info(mes);
+    return { Message: mes };
   }
 
   async remove (events, functionName) {
@@ -163,20 +196,9 @@ class EventSource {
         resConfig[eventName] = { Message: mes };
         continue;
       }
-      this.logger.info(`Start remove ${eventName}.`);
-      await this.lambda('removePermission', {
-        FunctionName: functionName,
-        StatementId: this.getUUID(functionName)
-      });
-      const mes = `Successfully remove Amazon API Gateway Trigger.`;
-      this.logger.info(mes);
-      resConfig[eventName] = { Message: mes };
+      resConfig[eventName] = await this.removeApiTrigger(eventName, functionName);
     }
     return resConfig;
-  }
-
-  async get () {
-    
   }
 }
 
