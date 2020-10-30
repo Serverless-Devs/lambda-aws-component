@@ -21,6 +21,11 @@ class Client {
     const apigatewayv2 = new AWS.ApiGatewayV2(this.config);
     return apigatewayv2;
   }
+
+  iam () {
+    const iam = new AWS.IAM(this.config);
+    return iam;
+  }
 }
 
 module.exports = Client;
