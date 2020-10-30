@@ -19,13 +19,16 @@ Properties:
     Code:
       Description: 代码包
       Required: true
-    DeadLetterConfig:
-      Description: https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#dlq
-      Required: false
+    Name:
+      Description: 接口中的 FunctionName
+      Required: true
+    Handler:
+      Description: 入口
+      Required: true
+    Runtime:
+      Description: 执行环境
+      Required: true
     Description:
       Description: 描述
-      Required: false
-    Environment:
-      Description: 环境变量
       Required: false
       
