@@ -42,7 +42,7 @@ class EventSource {
     const createApiRes = await this.apigatewayv2('createApi', {
       Name: apiName,
       ProtocolType: 'HTTP',
-      Description: `s 自动创建。`,
+      Description: `S is automatically created.`,
       Target: functionArn
     });
     this.logger.info(`Successfully created API.`)
@@ -71,7 +71,7 @@ class EventSource {
     const createRes = await this.apigatewayv2('createIntegration', {
       ApiId,
       ConnectionType: 'INTERNET',
-      Description: 's 自动创建。',
+      Description: 'S is automatically created.',
       IntegrationMethod: Method,
       IntegrationType: 'AWS_PROXY',
       IntegrationUri: functionArn,

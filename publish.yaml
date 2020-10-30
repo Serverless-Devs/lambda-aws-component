@@ -4,13 +4,13 @@ Provider:
   - AWS
 Version: 0.0.1
 Description: AWS Lambda 部署移除
-HomePage: https://www.aliyun.com/
+HomePage: https://github.com/Serverless-Devs/lambda-aws-component/blob/master/readme.md
 Tags:
   - AWS Lambda
 Category: 基础云服务
 Commands:
-  deploy: 部署函数
-  remove: 移除函数
+  deploy: 部署资源
+  remove: 移除资源
 Properties:
   Region:
     Description: 地域
