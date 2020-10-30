@@ -43,7 +43,6 @@ class EventSource {
       Name: apiName,
       ProtocolType: 'HTTP',
       Description: `s 自动创建。`,
-      DisableExecuteApiEndpoint: true,
       Target: functionArn
     });
     this.logger.info(`Successfully created API.`)
