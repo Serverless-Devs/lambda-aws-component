@@ -102,13 +102,26 @@ class EventSource {
     await this.handlerRoute(apiRes, properties, integrationRes.IntegrationId)
 
     const arns = functionArn.split(':');
-    return await this.lambda('addPermission', {
+
+    try {
+      await this.lambda('removePermission', {
+        FunctionName: functionName,
+        StatementId: this.getUUID(functionName)
+      });
+    } catch (e) {}
+
+    await this.lambda('addPermission', {
       FunctionName: functionName,
       StatementId: this.getUUID(functionName),
       Action: 'lambda:InvokeFunction',
       Principal: 'apigateway.amazonaws.com',
       SourceArn: `arn:aws:execute-api:${arns[3]}:${arns[4]}:${apiRes.ApiId}/*/*${properties.Path}`
     });
+
+    return {
+      ApiEndpoint: apiRes.ApiEndpoint,
+      Uri: `${apiRes.ApiEndpoint}${properties.Path}`
+    }
   }
 
   getUUID (functionName) {

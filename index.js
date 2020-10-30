@@ -50,7 +50,10 @@ class AWSComponent extends Component {
     const functionClient = new Function(awsClients.lambda());
     this.logger.info(`Starting deploy of AWS Lambda "${functionName}" to the AWS region "${region}".`);
     const res = await functionClient.deploy(properties);
-    resConfig.Function = res;
+    resConfig.Function = {
+      Name: res.FunctionName,
+      Arn: res.FunctionArn
+    };
     this.logger.info(`Successfully deploy AWS Lambda function.`);
 
     const eventSourceClient = new EventSource(awsClients);
