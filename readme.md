@@ -6,9 +6,8 @@
 
 ````
 MyFunctionDemo:
-  Component: s-aws-lambda
+  Component: lambda
   Provider: aws
-  Access: aws
   Properties:
     Region: ap-southeast-1
     Function:
@@ -18,7 +17,7 @@ MyFunctionDemo:
       Runtime: nodejs12.x
       Description: 测试的
     Events:
-      api-sdk:
+      - Name: triggerName
         Type: Api
         Properties:
           Path: /dome
