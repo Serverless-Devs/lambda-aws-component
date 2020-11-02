@@ -2,7 +2,7 @@ Type: Component
 Name: lambda
 Provider:
   - AWS
-Version: 0.0.1
+Version: 0.0.2
 Description: 快速部署 Lambda 到 AWS
 HomePage: https://github.com/Serverless-Devs-Awesome/lambda-aws-component
 Tags:
@@ -21,156 +21,160 @@ Properties:
     Type:
       - String
   Function:
-    Code:
-      Description: The code for the function.
-      Required: true
-      Type:
-        - String
-    Name:
-      Description: The name of the Lambda function.
-      Required: true
-      Type:
-        - String
-    Description:
-      Description: 描述
-      Required: false
-      Type:
-        - String
-    DeadLetterConfig:
-      Description: A dead letter queue configuration that specifies the queue or topic where Lambda sends asynchronous events when they fail processing.
-      Required: false
-      Type:
-        - Struct:
-            TargetArn:
-              Description: The Amazon Resource Name (ARN) of an Amazon SQS queue or Amazon SNS topic.
-              Required: false
-              Type:
-                - String
-    Environment:
-      Required: false
-      Description: The function's environment variables.
-      Type:
-        - Struct:
-            Error:
-              Required: false
-              Description: Error messages for environment variables that couldn't be applied.
-              Type:
-                - Struct:
-                    ErrorCode:
-                      Required: false
-                      Description: The error code.
-                      Type:
-                        - String
-                    Message:
-                      Required: false
-                      Description: The error message.
-                      Type:
-                        - String
-            Variables:
-              Required: false
-              Description: Environment variable key-value pairs.
-              Type:
-                - List<Struct>:
-                    Key:
-                      Required: false
-                      Description: Environment key.
-                      Type:
-                        - String
-                    Value:
-                      Required: false
-                      Description: Environment value.
-                      Type:
-                        - String
-    Tags:
-      Required: false
-      Description: A list of tags to apply to the function.
-      Type:
-        - List<Struct>:
-            Key:
-              Required: true
-              Description: Tag key.
-              Type:
-                - String
-            Value:
-              Required: true
-              Description: Tag value.
-              Type:
-                - String
-    FileSystemConfig:
-      Description: Connection settings for an Amazon EFS file system.
-      Required: false
-      Type:
-        - Struct:
-            Arn:
-              Description: The Amazon Resource Name (ARN) of the Amazon EFS access point that provides access to the file system.
-              Required: false
-              Type:
-                - String
-            LocalMountPath:
-              Description: The path where the function can access the file system, starting with /mnt/.
-              Required: false
-              Type:
-                - String
-    Handler:
-      Description: 入口
-      Required: true
-      Type:
-        - String
-    KMSKeyArn:
-      Description: The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt your function's environment variables. If it's not provided, AWS Lambda uses a default service key.
-      Required: false
-      Type:
-        - String
-    Layers:
-      Description: A list of function layers to add to the function's execution environment. Specify each layer by its ARN, including the version.
-      Required: false
-      Type:
-        - List<String>
-    Runtime:
-      Description: The identifier of the function's runtime.
-      Required: true
-      Type:
-        - String
-    Publish:
-      Description: Set to true to publish the first version of the function during creation.
-      Required: true
-      Type:
-        - Boolean
-    MemorySize:
-      Description: The amount of memory that your function has access to. Increasing the function's memory also increases its CPU allocation. The default value is 128 MB. The value must be a multiple of 64 MB.
-      Required: false
-      Type:
-        - Number
-    Timeout:
-      Description: The amount of time that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds.
-      Required: false
-      Type:
-        - Number
-    TracingConfig:
-      Description: Set Mode to Active to sample and trace a subset of incoming requests with AWS X-Ray.
-      Required: false
-      Type:
-        - Struct:
-            Mode:
-              Description: The tracing mode.
-              Required: false
-              Type:
-                - String
-    VpcConfig:
-      Description: For network connectivity to AWS resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC.
-      Required: false
-      Type:
-        - Struct:
-            SecurityGroupIds:
-              Description: A list of VPC security groups IDs.
-              Required: false
-              Type:
-                - List<String>
-            SubnetIds:
-              Description: A list of VPC subnet IDs.
-              Required: false
-              Type:
-                - List<String>
+    Description: The config of function.
+    Required: true
+    Type:
+      - Struct:
+          Code:
+            Description: The code for the function.
+            Required: true
+            Type:
+              - String
+          Name:
+            Description: The name of the Lambda function.
+            Required: true
+            Type:
+              - String
+          Description:
+            Description: 描述
+            Required: false
+            Type:
+              - String
+          DeadLetterConfig:
+            Description: A dead letter queue configuration that specifies the queue or topic where Lambda sends asynchronous events when they fail processing.
+            Required: false
+            Type:
+              - Struct:
+                  TargetArn:
+                    Description: The Amazon Resource Name (ARN) of an Amazon SQS queue or Amazon SNS topic.
+                    Required: false
+                    Type:
+                      - String
+          Environment:
+            Required: false
+            Description: The function's environment variables.
+            Type:
+              - Struct:
+                  Error:
+                    Required: false
+                    Description: Error messages for environment variables that couldn't be applied.
+                    Type:
+                      - Struct:
+                          ErrorCode:
+                            Required: false
+                            Description: The error code.
+                            Type:
+                              - String
+                          Message:
+                            Required: false
+                            Description: The error message.
+                            Type:
+                              - String
+                  Variables:
+                    Required: false
+                    Description: Environment variable key-value pairs.
+                    Type:
+                      - List<Struct>:
+                          Key:
+                            Required: false
+                            Description: Environment key.
+                            Type:
+                              - String
+                          Value:
+                            Required: false
+                            Description: Environment value.
+                            Type:
+                              - String
+          Tags:
+            Required: false
+            Description: A list of tags to apply to the function.
+            Type:
+              - List<Struct>:
+                  Key:
+                    Required: true
+                    Description: Tag key.
+                    Type:
+                      - String
+                  Value:
+                    Required: true
+                    Description: Tag value.
+                    Type:
+                      - String
+          FileSystemConfig:
+            Description: Connection settings for an Amazon EFS file system.
+            Required: false
+            Type:
+              - Struct:
+                  Arn:
+                    Description: The Amazon Resource Name (ARN) of the Amazon EFS access point that provides access to the file system.
+                    Required: false
+                    Type:
+                      - String
+                  LocalMountPath:
+                    Description: The path where the function can access the file system, starting with /mnt/.
+                    Required: false
+                    Type:
+                      - String
+          Handler:
+            Description: 入口
+            Required: true
+            Type:
+              - String
+          KMSKeyArn:
+            Description: The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt your function's environment variables. If it's not provided, AWS Lambda uses a default service key.
+            Required: false
+            Type:
+              - String
+          Layers:
+            Description: A list of function layers to add to the function's execution environment. Specify each layer by its ARN, including the version.
+            Required: false
+            Type:
+              - List<String>
+          Runtime:
+            Description: The identifier of the function's runtime.
+            Required: true
+            Type:
+              - String
+          Publish:
+            Description: Set to true to publish the first version of the function during creation.
+            Required: true
+            Type:
+              - Boolean
+          MemorySize:
+            Description: The amount of memory that your function has access to. Increasing the function's memory also increases its CPU allocation. The default value is 128 MB. The value must be a multiple of 64 MB.
+            Required: false
+            Type:
+              - Number
+          Timeout:
+            Description: The amount of time that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds.
+            Required: false
+            Type:
+              - Number
+          TracingConfig:
+            Description: Set Mode to Active to sample and trace a subset of incoming requests with AWS X-Ray.
+            Required: false
+            Type:
+              - Struct:
+                  Mode:
+                    Description: The tracing mode.
+                    Required: false
+                    Type:
+                      - String
+          VpcConfig:
+            Description: For network connectivity to AWS resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC.
+            Required: false
+            Type:
+              - Struct:
+                  SecurityGroupIds:
+                    Description: A list of VPC security groups IDs.
+                    Required: false
+                    Type:
+                      - List<String>
+                  SubnetIds:
+                    Description: A list of VPC subnet IDs.
+                    Required: false
+                    Type:
+                      - List<String>
     Events:
       Description: The events of function.
       Required: false
