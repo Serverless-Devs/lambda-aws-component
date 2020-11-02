@@ -1,8 +1,9 @@
 {
-  "name": "s-aws-lambda",
+  "name": "@serverless-devs/lambda-tencent",
   "version": "0.0.1",
-  "description": "",
+  "description": "Serverless Devs Tool Lambda Component For AWS",
   "main": "index.js",
+  "author": "wss",
   "dependencies": {
     "@serverless-devs/s-core": "0.0.22",
     "@serverless-devs/s-zip": "0.0.8",
@@ -15,6 +16,5 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "publish": "script/publish.sh"
   },
-  "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
