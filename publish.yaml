@@ -2,7 +2,7 @@ Type: Component
 Name: lambda
 Provider:
   - AWS
-Version: 0.0.10
+Version: 0.1.0
 Description: 快速部署 Lambda 到 AWS
 HomePage: https://github.com/Serverless-Devs-Awesome/lambda-aws-component
 Tags:
@@ -179,10 +179,10 @@ Properties:
     Description: The events of function.
     Required: false
     Type:
-      - List<Struct>[APIGateway]:
+      - List<Struct>:
           Name:
             Required: true
-            Description: Trigger Name/
+            Description: Trigger Name.
             Type:
               - String
           Type:
@@ -216,8 +216,8 @@ Properties:
                     Description: The TimeoutInMillis of apigateway event.
                     Type:
                       - String
-                PayloadFormatVersion:
-                  Required: false
-                  Description: The PayloadFormatVersion of apigateway event.
-                  Type:
-                    - String
+                  PayloadFormatVersion:
+                    Required: false
+                    Description: The PayloadFormatVersion of apigateway event.
+                    Type:
+                      - String
