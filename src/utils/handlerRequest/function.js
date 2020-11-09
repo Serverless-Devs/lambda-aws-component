@@ -44,7 +44,8 @@ class Function {
   }
   
   async prepareCode (inputs) {
-    let codeUri = inputs.Code;
+
+    let codeUri = inputs.Code || inputs.CodeUri;
   
     const artifactConfigured = (codeUri.endsWith('.zip') || codeUri.endsWith('.jar') || codeUri.endsWith('.war'))
     if (!artifactConfigured) {

@@ -11,7 +11,7 @@ MyFunctionDemo:
   Properties:
     Region: ap-southeast-1
     Function:
-      Code: ./index.js
+      CodeUri: ./index.js
       Name: aws-lambda-dome
       Handler: index.handler
       Runtime: nodejs12.x

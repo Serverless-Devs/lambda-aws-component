@@ -2,7 +2,7 @@ Type: Component
 Name: lambda
 Provider:
   - AWS
-Version: 0.0.4
+Version: 0.0.5
 Description: 快速部署 Lambda 到 AWS
 HomePage: https://github.com/Serverless-Devs-Awesome/lambda-aws-component
 Tags:
@@ -25,7 +25,7 @@ Properties:
     Required: true
     Type:
       - Struct:
-          Code:
+          CodeUri:
             Description: The code for the function.
             Required: true
             Type:
