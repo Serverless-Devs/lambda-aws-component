@@ -70,7 +70,7 @@ class Function {
     this.logger.warn(`The configuration does not have role information, and the component generates the role automatically.`);
     const roleName = `s-${functionName}-role-${randomStr()}`;
     this.logger.info(`Start generating roleName: ${roleName}`);
-    this.logger.info(trustPolicyDocument)
+    // this.logger.info(trustPolicyDocument)
     const { Role } = await this.iam('createRole', {
       RoleName: roleName,
       AssumeRolePolicyDocument: trustPolicyDocument,
