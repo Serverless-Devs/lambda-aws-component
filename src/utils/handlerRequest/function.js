@@ -133,6 +133,7 @@ class Function {
     } catch (e) {
       if (e.code === 'ResourceNotFoundException') {
         functionInput.Code = code;
+        delete functionInput.CodeUri;
         return await this.createFunction(functionInput);
       }
       throw new Error(e.message)
