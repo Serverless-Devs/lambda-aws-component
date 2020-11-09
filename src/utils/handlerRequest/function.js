@@ -76,7 +76,11 @@ class Function {
       RoleName: roleName,
       AssumeRolePolicyDocument: trustPolicyDocument,
       Description: 's auto generate role.'
-    })
+    });
+    await this.iam('attachRolePolicy', {
+      RoleName: roleName,
+      PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+    });
     this.logger.info('Successfully generated role.');
     return Role.Arn;
   }
