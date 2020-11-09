@@ -2,7 +2,7 @@ Type: Component
 Name: lambda
 Provider:
   - AWS
-Version: 0.0.9
+Version: 0.0.10
 Description: 快速部署 Lambda 到 AWS
 HomePage: https://github.com/Serverless-Devs-Awesome/lambda-aws-component
 Tags:
@@ -175,49 +175,49 @@ Properties:
                     Required: false
                     Type:
                       - List<String>
-    Events:
-      Description: The events of function.
-      Required: false
-      Type:
-        - List<Struct>[APIGateway]:
-            Name:
-              Required: true
-              Description: Trigger Name/
-              Type:
-                - String
+  Events:
+    Description: The events of function.
+    Required: false
+    Type:
+      - List<Struct>[APIGateway]:
+          Name:
+            Required: true
+            Description: Trigger Name/
             Type:
-              Required: true
-              Description: Trigger type.
-              Type:
-                - Enum:
-                    - Api
-            Properties:
-              Required: true
-              Description: The properties of event.
-              Type:
-                - Struct:
-                    Path:
-                      Required: true
-                      Description: The path of apigateway event.
-                      Type:
-                        - String
-                    Method:
-                      Required: true
-                      Description: The Method of apigateway event.
-                      Type:
-                        - Enum:
-                            - ANY
-                            - GET
-                            - POST
-                            - DELETE
-                            - PUT
-                    TimeoutInMillis:
-                      Required: false
-                      Description: The TimeoutInMillis of apigateway event.
-                      Type:
-                        - String
-                  PayloadFormatVersion:
-                    Required: false
-                    Description: The PayloadFormatVersion of apigateway event.
+              - String
+          Type:
+            Required: true
+            Description: Trigger type.
+            Type:
+              - Enum:
+                  - Api
+          Properties:
+            Required: true
+            Description: The properties of event.
+            Type:
+              - Struct:
+                  Path:
+                    Required: true
+                    Description: The path of apigateway event.
                     Type:
                       - String
+                  Method:
+                    Required: true
+                    Description: The Method of apigateway event.
+                    Type:
+                      - Enum:
+                          - ANY
+                          - GET
+                          - POST
+                          - DELETE
+                          - PUT
+                  TimeoutInMillis:
+                    Required: false
+                    Description: The TimeoutInMillis of apigateway event.
+                    Type:
+                      - String
+                PayloadFormatVersion:
+                  Required: false
+                  Description: The PayloadFormatVersion of apigateway event.
+                  Type:
+                    - String

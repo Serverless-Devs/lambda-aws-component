@@ -1,6 +1,6 @@
 {
   "name": "@serverless-devs/lambda-tencent",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Serverless Devs Tool Lambda Component For AWS",
   "main": "index.js",
   "author": "wss",
