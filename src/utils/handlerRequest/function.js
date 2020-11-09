@@ -46,7 +46,7 @@ class Function {
   async prepareCode (inputs) {
 
     let codeUri = inputs.Code || inputs.CodeUri;
-  
+
     const artifactConfigured = (codeUri.endsWith('.zip') || codeUri.endsWith('.jar') || codeUri.endsWith('.war'))
     if (!artifactConfigured) {
       const outputFileName = `${inputs.FunctionName}.zip`;
@@ -113,6 +113,7 @@ class Function {
     const functionInput = JSON.parse(JSON.stringify(properties.Function));
     const functionName = functionInput.FunctionName;
     this.logger.info('Start compressing code.');
+
     const code = await this.prepareCode(functionInput);
     this.logger.info('Successful compression code.');
 
@@ -123,6 +124,7 @@ class Function {
         ZipFile: code.ZipFile
       });
       delete functionInput.Code;
+      delete functionInput.CodeUri;
       return await this.lambda('updateFunctionConfiguration', functionInput);
     } catch (e) {
       if (e.code === 'ResourceNotFoundException') {
